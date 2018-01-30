@@ -210,7 +210,7 @@ Selecting random samples of half the size of groups without replacement do surve
 
 
 
-   Roger
+    Roger
 
      I remember that algorithm, keep track of where you are and add output at different probabilities until you have the exact 
     number you want.
