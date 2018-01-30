@@ -147,3 +147,57 @@ run;quit;
 
 ');
 
+
+Paul Dorfman <sashole@bellsouth.net>
+
+Roger,
+
+Tis' neat. OTOH, it's occurred to me that the first DoW can be coded just for counting the number of obs in the BY group, and the second - for sampling using the long in the tooth "K/N" method:
+
+data want (drop = K N) ;
+  do N = 1 by 1 until (last.rev) ;
+    set havsrtsrt ;
+    by rev ;
+  end ;
+  K = ceil (N * 0.5) ;
+  do _n_ = 1 to N ;
+    set havsrtsrt ;
+    if rand ('uniform') < divide (K,N) then do ;
+      output ;
+      K +- 1 ;
+    end ;
+    N +- 1 ;
+  end ;
+run ;
+
+However, it's more interesting to ponder how the same can be done against a totally disordered file in the same two passes through it. Here a hash table once again looks like a perfect tool for the job. On the first pass, it collects the obs counts N for every group by REV and the corresponding K-values. On the second, the same "K/N" scheme as above is executed, except that the (K,N) hash values are adjusted on the fly as the logic dictates:
+
+data want (drop = K N) ;
+  dcl hash h() ;
+  h.defineKey  ("rev") ;
+  h.defineData ("K", "N") ;
+  h.defineDone () ;
+  do until (z1) ;
+    set have end = z1 ;
+    if h.find() ne 0 then N = 1 ;
+    else                  N + 1 ;
+    K = ceil (N * 0.5) ;
+    h.replace() ;
+  end ;
+  do until (z2) ;
+    set have end = z2 ;
+    h.find() ;
+    if rand ('uniform') < divide (K,N) then do ;
+      output ;
+      K +- 1 ;
+    end ;
+    N +- 1 ;
+    h.replace() ;
+  end ;
+  stop ;
+run ;
+
+Kind regards,
+
+Paul Dorfman
+
