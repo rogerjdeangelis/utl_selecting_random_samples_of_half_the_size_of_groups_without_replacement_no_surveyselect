@@ -201,3 +201,11 @@ Kind regards,
 
 Paul Dorfman
 
+Roger
+
+  I remember that algorithm, keep track of where you are and add output at different probabilities until you have the exact 
+number you want.
+
+  It had  that in the back of my head but I could not reproduce it.
+
+  Fast and not need for slicer.
